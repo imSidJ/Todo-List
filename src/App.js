@@ -1,60 +1,90 @@
-import React from 'react';
-import './App.css';
-import TodoList from './TodoList/todoList.js'
-import AddTodo from './AddTodo/addTodo.js'
+import React, { Component } from 'react'
+import TodoInput from './components/TodoInput'
+import TodoList from './components/TodoList'
 
+import 'bootstrap/dist/css/bootstrap.min.css'
+import uuid from 'uuid'
 
-class App extends React.Component {
+export default class App extends Component {
 
-  constructor() {
-    super()
-    this.state = {
-      todos: []
-    };
-  }
-
-  render() {
-    return(
-      <div>
-        <AddTodo addTodoFn={this.addTodo}></AddTodo>
-		<TodoList updateTodoFn={this.updateTodo} todos={this.state.todos}></TodoList>
-      </div>
-    )
-  }
-
-  componentDidMount = () => {
-    const todos = localStorage.getItem('todos')
-    if(todos) {
-      const savedTodos = JSON.parse(todos)
-      this.setState({ todos : savedTodos })
-    } else {
-      console.log('no todos')
+    state = {
+        items: [],
+        id: uuid(),
+        item: '',
+        editItem: false
     }
-  }
 
-  addTodo = async (todo) => {
-	await this.setState({ todos : [...this.state.todos, {
-		text : todo,
-		completed : false
-	}] })
-	localStorage.setItem('todos', JSON.stringify(this.state.todos))
-	console.log(localStorage.getItem('todos'))
-  }
+    handleChange = (e) => {
+        this.setState({
+            item: e.target.value
+        })
+    }
 
-  updateTodo = async (todo) => {
-	  const newTodos = this.state.todos.map(_todo => {
-		if(todo === _todo) {
-			return {
-				text: todo.text,
-				completed: !todo.completed
-			}
-		} else {
-			return _todo
-		}
-	  })
-	  await this.setState({ todos : newTodos})
-	  localStorage.setItem('todos', JSON.stringify(this.state.todos))
-  }
+    handleSubmit = (e) => {
+
+        e.preventDefault()
+
+        const newItem = {
+            id: this.state.id,
+            title: this.state.item
+        }
+        console.log(newItem)
+
+        const updateItems = [...this.state.items, newItem]
+
+        this.setState({
+            items: updateItems,
+            item: '',
+            id: uuid(),
+            editItem: false
+        })
+    }
+
+    handleClearList = (e) => {
+        this.setState({
+            items: []
+        })
+    }
+
+    handleDelete = (id) => {
+        const filterdItems = this.state.items.filter(item => item.id !== id)
+        this.setState({
+            items: filterdItems
+        })
+    }
+
+    handleEdit = (id) => {
+        const filterdItems = this.state.items.filter(item => item.id !== id)
+        const selectedItem = this.state.items.find(item => item.id === id)
+        this.setState({
+            items: filterdItems,
+            item: selectedItem.title,
+            id: id,
+            editItem: true
+        })
+    }
+
+    render() {
+        return(
+            <div className="container">
+                <div className="row">
+                    <div className="col-10 mx-auto col-md-8 mt-4">
+                        <h3 className="text-capitalize text-center">todo input</h3>
+                        <TodoInput
+                            item={this.state.item}
+                            handleChange={this.handleChange}
+                            handleSubmit={this.handleSubmit}
+                            editItem={this.state.editItem}
+                        />
+                        <TodoList
+                            items={this.state.items}
+                            handleClearList={this.handleClearList}
+                            handleDelete={this.handleDelete}
+                            handleEdit={this.handleEdit}
+                        />
+                    </div>
+                </div>
+            </div>
+        )
+    }
 }
-
-export default App;
