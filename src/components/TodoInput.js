@@ -20,7 +20,7 @@ export default class TodoInput extends Component {
                             placeholder="Add A Todo Item"
                             value={item}
                             onChange={handleChange}
-                        />
+                        required/>
                     </div>
                     <button type="submit" className={"btn btn-block mt-3 text-capitalize" + (editItem ? " btn-success" : " btn-primary")}>
                         {(editItem ? "edit item" : "add item")}
