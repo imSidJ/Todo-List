@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import axios from 'axios'
 import TodoInput from './components/TodoInput'
 import TodoList from './components/TodoList'
 
@@ -13,6 +14,16 @@ export default class App extends Component {
         item: '',
         editItem: false
     }
+
+	componentDidMount(){
+		axios.get('http://localhost:4000/todos')
+			.then(response => {
+				console.log(response)
+				response.forEach(todo => {
+					console.log(todo)
+				})
+			})
+	}
 
     handleChange = (e) => {
         this.setState({

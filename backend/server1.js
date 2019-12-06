@@ -1,16 +1,16 @@
-const express = require('express')
-const MongoClient = require('mongodb').MongoClient
-const app = express()
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const todoRoutes =  express.Router()
+//const express = require('express')
+//const MongoClient = require('mongodb').MongoClient
+//const app = express()
+//const bodyParser = require('body-parser')
+//const cors = require('cors')
+//const todoRoutes =  express.Router()
 const mongoose  = require('mongoose')
-const PORT = 4000
+//const PORT = 4000
 
 var Todo = require('./todo.model.js')
 
-app.use(cors())
-app.use(bodyParser.json())
+//app.use(cors())
+//app.use(bodyParser.json())
 
 mongoose.connect('mongodb+srv://Siddharth:Mo1rrC0a82txoJHZ@cluster0-63xm5.gcp.mongodb.net/Todos', { useNewUrlParser : true});
 
@@ -84,9 +84,9 @@ todoRoutes.route('/update').post(function(req, res) {
 //	})
 })
 
-app.use('/todos', todoRoutes)
+//app.use('/todos', todoRoutes)
 
-app.listen(PORT, function() {
-    console.log(`Server is running on port ${PORT}`)
-})
+//app.listen(PORT, function() {
+//    console.log(`Server is running on port ${PORT}`)
+//})
 
