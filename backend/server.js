@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const todoRoutes =  express.Router()
 const mongoose  = require('mongoose')
-const PORT = 4000
+const PORT = process.env.PORT || 4000
 
 var Todo = require('./todo.model.js')
 
@@ -44,7 +44,18 @@ todoRoutes.route('/').get(function(req, res){
 
 todoRoutes.route('/delete').post(function(req, res) {
 	let id = req.body.id
+	console.log(id)
 	Todo.deleteOne({id: id}).then(docs => {
+		if(docs)
+			res.status(200).send('todo deleted')
+		else
+			res.status(400).send('no record found')
+	})
+})
+
+todoRoutes.route('/clear').post(function(req, res) {
+	let id = req.param.id
+	Todo.deleteMany({}).then(docs => {
 		if(docs)
 			res.status(200).send('todo deleted')
 		else
@@ -70,18 +81,6 @@ todoRoutes.route('/update').post(function(req, res) {
        		reject({success:false,data:"no such user exist"});
     	}
 	})
-
-	//Todo.find({id: id}, function(err, todo) {
-	//	if(!todo)
-	//		res.status(400).send('data not found')
-	//	else {
-	//		console.log(todo)
-	//		let editedTodo = new Todo(req.body)
-		//	editedTodo.save({id: id}).then(doc => {
-		//		res.status(200).send('edited todo added')
-		//	})
-	//	}
-//	})
 })
 
 app.use('/todos', todoRoutes)

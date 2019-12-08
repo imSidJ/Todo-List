@@ -15,14 +15,19 @@ export default class App extends Component {
         editItem: false
     }
 
-	componentDidMount(){
-		axios.get('http://localhost:4000/todos')
-			.then(response => {
-				console.log(response)
-				response.forEach(todo => {
-					console.log(todo)
-				})
-			})
+	async componentDidMount(){
+        let response = await axios.get('https://sid-todo-backend.herokuapp.com/todos')
+        let todos = response.data
+        let newTodos = []
+        todos.forEach(todo => {
+            delete todo['_id']
+            delete todo['__v']
+            newTodos.push(todo)
+        })
+        console.log(JSON.stringify(newTodos))
+        this.setState({
+            items: newTodos
+        })
 	}
 
     handleChange = (e) => {
@@ -41,6 +46,16 @@ export default class App extends Component {
         }
         console.log(newItem)
 
+        if(this.state.editItem) {
+            axios.post('https://sid-todo-backend.herokuapp.com/todos/update', newItem).then(response => {
+                console.log(response)
+            })
+        } else {
+            axios.post('https://sid-todo-backend.herokuapp.com/todos/add', newItem).then(response => {
+                console.log(response)
+            })
+        }
+
         const updateItems = [...this.state.items, newItem]
 
         this.setState({
@@ -52,12 +67,22 @@ export default class App extends Component {
     }
 
     handleClearList = (e) => {
+
+        axios.post(`https://sid-todo-backend.herokuapp.com/todos/clear`).then(response => {
+            console.log(response)
+        })
+
         this.setState({
             items: []
         })
     }
 
     handleDelete = (id) => {
+
+        axios.post('https://sid-todo-backend.herokuapp.com/todos/delete', {id :id}).then(response => {
+            console.log(response)
+        })
+
         const filterdItems = this.state.items.filter(item => item.id !== id)
         this.setState({
             items: filterdItems
